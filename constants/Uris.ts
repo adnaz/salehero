@@ -1,0 +1,1 @@
+export const senariosUri : string =  "http://34.93.142.206:7000/api/get-all-courses"

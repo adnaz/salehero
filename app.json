@@ -4,6 +4,9 @@
     "slug": "saleshero",
     "version": "1.0.0",
     "orientation": "portrait",
+    "plugins": [
+      "@react-native-voice/voice"
+    ],
     "icon": "./assets/images/icon.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
@@ -19,13 +22,18 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "saleshero"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ],
+      "package": "com.adn_az.saleshero"
     },
     "web": {
       "favicon": "./assets/images/favicon.png"

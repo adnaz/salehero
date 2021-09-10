@@ -4,18 +4,23 @@
  *
  */
 import { FontAwesome } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons'; 
+
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as React from 'react';
-import { ColorSchemeName, Pressable } from 'react-native';
+import { ColorSchemeName, Pressable, Text } from 'react-native';
 
 import Colors from '../constants/Colors';
 import useColorScheme from '../hooks/useColorScheme';
 import ModalScreen from '../screens/ModalScreen';
 import NotFoundScreen from '../screens/NotFoundScreen';
+import QuestionTypeOne from '../screens/Question/QuestionTypeOne';
+import Senarios from '../screens/Senarios';
 import TabOneScreen from '../screens/TabOneScreen';
 import TabTwoScreen from '../screens/TabTwoScreen';
+import { useStore } from '../state/Store';
 import { RootStackParamList, RootTabParamList, RootTabScreenProps } from '../types';
 import LinkingConfiguration from './LinkingConfiguration';
 
@@ -39,6 +44,8 @@ function RootNavigator() {
   return (
     <Stack.Navigator>
       <Stack.Screen name="Root" component={BottomTabNavigator} options={{ headerShown: false }} />
+      <Stack.Screen name="Senario" component={QuestionTypeOne} options={{ headerShown: true }} />
+      <Stack.Screen name="Senarios" component={Senarios} options={{ headerShown: true }} />
       <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
       <Stack.Group screenOptions={{ presentation: 'modal' }}>
         <Stack.Screen name="Modal" component={ModalScreen} />
@@ -55,7 +62,7 @@ const BottomTab = createBottomTabNavigator<RootTabParamList>();
 
 function BottomTabNavigator() {
   const colorScheme = useColorScheme();
-
+  const {user} = useStore();
   return (
     <BottomTab.Navigator
       initialRouteName="TabOne"
@@ -66,18 +73,23 @@ function BottomTabNavigator() {
         name="TabOne"
         component={TabOneScreen}
         options={({ navigation }: RootTabScreenProps<'TabOne'>) => ({
-          title: 'Tab One',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          title: '',
+          tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
           headerRight: () => (
             <Pressable
               onPress={() => navigation.navigate('Modal')}
               style={({ pressed }) => ({
                 opacity: pressed ? 0.5 : 1,
+                flexDirection:'row',
+                alignItems:'center'
               })}>
-              <FontAwesome
-                name="info-circle"
+                <Text style={{fontFamily:'Roboto_900Black',fontSize:20,color:Colors[colorScheme].score}}>
+                {user.points}{' '}
+                  </Text>
+              <Ionicons
+                name="star"
                 size={25}
-                color={Colors[colorScheme].text}
+                color={Colors[colorScheme].score}
                 style={{ marginRight: 15 }}
               />
             </Pressable>

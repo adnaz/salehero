@@ -1,15 +1,54 @@
-import * as React from 'react';
-import { StyleSheet } from 'react-native';
+import React, { useState, useEffect } from "react";
+import { Button, StyleSheet, Text, View } from "react-native";
+import Voice, {
+  SpeechResultsEvent,
+  SpeechErrorEvent,
+} from "@react-native-voice/voice";
 
-import EditScreenInfo from '../components/EditScreenInfo';
-import { Text, View } from '../components/Themed';
+export default function App() {
+  const [results, setResults] = useState([] as string[]);
+  const [isListening, setIsListening] = useState(false);
 
-export default function TabTwoScreen() {
+  useEffect(() => {
+    function onSpeechResults(e: SpeechResultsEvent) {
+      setResults(e.value ?? []);
+    }
+    function onSpeechError(e: SpeechErrorEvent) {
+      console.error(e);
+    }
+    Voice.onSpeechError = onSpeechError;
+    Voice.onSpeechResults = onSpeechResults;
+    return function cleanup() {
+      Voice.destroy().then(Voice.removeAllListeners);
+    };
+  }, []);
+
+  async function toggleListening() {
+    try {
+      if (isListening) {
+        await Voice.stop();
+        setIsListening(false);
+      } else {
+        setResults([]);
+        await Voice.start("en-US");
+        setIsListening(true);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Tab Two</Text>
-      <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-      <EditScreenInfo path="/screens/TabTwoScreen.tsx" />
+      <Text>Press the button and start speaking.</Text>
+      <Button
+        title={isListening ? "Stop Recognizing" : "Start Recognizing"}
+        onPress={toggleListening}
+      />
+      <Text>Results:</Text>
+      {results.map((result, index) => {
+        return <Text key={`result-${index}`}>{result}</Text>;
+      })}
     </View>
   );
 }
@@ -17,16 +56,8 @@ export default function TabTwoScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: '80%',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#F5FCFF",
   },
 });
